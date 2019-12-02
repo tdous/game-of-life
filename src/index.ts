@@ -86,17 +86,17 @@ txtInterval.onkeyup = (e: any) => {
 // <<<  Game control events
 
 // >>> Presets
-const loadPreset = (preset: string) => {
-  GOL.liveCells = getPreset(preset);
-  clearCells(ctx, W, H);
-  drawLiveCells(ctx, GOL.liveCells, cellSize);
-};
 const presetBtns = document.getElementsByClassName('btn-preset');
 for (let i = 0; i < presetBtns.length; i++) {
   const btn = presetBtns[i] as HTMLButtonElement;
-  btn.onclick = e => {
-    loadPreset((<HTMLElement>e.currentTarget).id.replace('preset-', ''));
-  }
+  btn.onclick = (e: any) => {
+    GOL.liveCells = getPreset(
+      e.currentTarget.id.replace('preset-', ''),
+      e.currentTarget.dataset.pad ? parseInt(e.currentTarget.dataset.pad) : null
+    );
+    clearCells(ctx, W, H);
+    drawLiveCells(ctx, GOL.liveCells, cellSize);
+  };
 }
 // <<< Presets
 
