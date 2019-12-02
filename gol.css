@@ -15,12 +15,15 @@
   width: 100%;
 }
 
+h2,
 p {
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 0.9em;
-  text-align: center;
   width: 100;
+}
+h2 {
+  text-align: center;
 }
 
 .controls {
@@ -29,6 +32,10 @@ p {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+}
+
+button {
+  cursor: pointer;
 }
 
 button,
@@ -41,10 +48,6 @@ input {
 
 label span {
   font-size: 0.7em;
-}
-
-#btn-toggle-sim {
-  cursor: pointer;
 }
 
 #g-o-l-bg,
@@ -66,4 +69,18 @@ label span {
   position: absolute;
   top: 0;
   z-index: -1;
+}
+
+.presets {
+  margin-top: 20px;
+}
+.presets ul li {
+  list-style-type: none;
+}
+.presets button {
+  margin-bottom: 5px;
+  width: auto;
+}
+.presets .category p {
+  margin: 10px 0 5px;
 }
