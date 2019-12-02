@@ -2,6 +2,7 @@ import { AnimLoopEngine } from 'anim-loop-engine';
 
 import { GameOfLifeMatrix } from './GOLMatrix';
 import { clearCells, drawBgGrid, drawLiveCells } from './GOLDrawingUtils';
+import { getPreset } from './GOLPresets';
 
 const engine = new AnimLoopEngine();
 
@@ -84,6 +85,21 @@ txtInterval.onkeyup = (e: any) => {
 };
 // <<<  Game control events
 
+// >>> Presets
+const loadPreset = (preset: string) => {
+  GOL.liveCells = getPreset(preset);
+  clearCells(ctx, W, H);
+  drawLiveCells(ctx, GOL.liveCells, cellSize);
+};
+const presetBtns = document.getElementsByClassName('btn-preset');
+for (let i = 0; i < presetBtns.length; i++) {
+  const btn = presetBtns[i] as HTMLButtonElement;
+  btn.onclick = e => {
+    loadPreset((<HTMLElement>e.currentTarget).id.replace('preset-', ''));
+  }
+}
+// <<< Presets
+
 // Window blur stops animation, just in case
 window.onblur = () => {
   stop();
@@ -116,7 +132,7 @@ canvas.onmousedown = (e: MouseEvent) => {
   handleMouseDraw(e);
 };
 canvas.onmousemove = handleMouseDraw;
-window.onmouseup = () => mouseBtn = 0;
+window.onmouseup = () => (mouseBtn = 0);
 
 // Game update loop, receives timestamp from AnimLoopEngine
 let tsFrom = 0;

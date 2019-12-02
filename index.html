@@ -9,7 +9,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <p>left-click = draw / right-click = erase</p>
+      <h2>left-click = draw / right-click = erase</h2>
 
       <div class="canvas-wrapper">
         <canvas id="g-o-l-bg"></canvas>
@@ -25,6 +25,32 @@
           <span>Interval (ms):</span><br />
           <input id="txt-interval" placeholder="250" />
         </label>
+      </div>
+      <div class="presets">
+        <h2>Try some presets:</h2>
+        <ul>
+          <li class="category"><p>Spaceships</p></li>
+          <li>
+            <button class="btn-preset" id="preset-glider">
+              <span>Glider</span>
+            </button>
+            <button class="btn-preset" id="preset-lightweight">
+              <span>Light-weight Ship</span>
+            </button>
+            <button class="btn-preset" id="preset-mediumweight">
+              <span>Medium-weight Ship</span>
+            </button>
+            <button class="btn-preset" id="preset-heavyweight">
+              <span>Heavy-weight Ship</span>
+            </button>
+          </li>
+          <li class="category"><p>Oscillators</p></li>
+          <li>
+            <button class="btn-preset" id="preset-pulsar">
+              <span>Pulsar</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
     <script src="dist/index.js"></script>
