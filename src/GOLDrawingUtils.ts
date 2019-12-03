@@ -1,43 +1,23 @@
+import { Easel } from 'easel-js';
+import { rect } from 'easel-js/lib/draw/rect';
+
+const aliveColor = '#484';
 const bgColor = '#DDD';
-
-// Draw a single cell
-const drawBgCell = (
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  cellSize: number
-) => {
-  ctx.beginPath();
-  ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize);
-  ctx.fill();
-};
-
-// Clear canvas
-export const clearCells = (
-  ctx: CanvasRenderingContext2D,
-  W: number,
-  H: number
-) => {
-  ctx.clearRect(0, 0, W, H);
-};
 
 // Generate background grid
 export const drawBgGrid = (
-  ctx: CanvasRenderingContext2D,
+  easel: Easel,
   gridSize: number,
   cellSize: number
 ) => {
-  ctx.fillStyle = bgColor;
+  easel.cx.fillStyle = bgColor;
+  easel.wipe();
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
-      if (i % 2 === 0) {
-        if (j % 2 === 0) {
-          drawBgCell(ctx, i, j, cellSize);
-        }
-      } else {
-        if (j % 2 !== 0) {
-          drawBgCell(ctx, i, j, cellSize);
-        }
+      switch (true) {
+        case i % 2 === 0 && j % 2 === 0:
+        case i % 2 !== 0 && j % 2 !== 0:
+          rect(easel.cx, j * cellSize, i * cellSize, cellSize, cellSize, 'f');
       }
     }
   }
@@ -45,17 +25,22 @@ export const drawBgGrid = (
 
 // Draw live cells
 export const drawLiveCells = (
-  ctx: CanvasRenderingContext2D,
+  easel: Easel,
   liveCells: number[][],
   cellSize: number
 ) => {
-  ctx.fillStyle = '#484';
+  easel.cx.fillStyle = aliveColor;
+  easel.wipe();
   for (let i in liveCells) {
     for (let j in liveCells[i]) {
-      const numI = parseInt(i);
-      const numJ = parseInt(j);
-
-      drawBgCell(ctx, numJ, numI, cellSize);
+      rect(
+        easel.cx,
+        parseInt(j) * cellSize,
+        parseInt(i) * cellSize,
+        cellSize,
+        cellSize,
+        'f'
+      );
     }
   }
 };

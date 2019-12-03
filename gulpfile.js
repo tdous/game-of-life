@@ -5,6 +5,7 @@ const webpack = require('webpack-stream');
 
 const mode = process.env.NODE_ENV || 'development';
 
+const JS_OUTPUT_DIR = 'build';
 const JS_OUTPUT_FILE = 'index.js';
 
 // >>> TS to JS
@@ -32,7 +33,7 @@ task('ts', async () =>
         }
       }).on('error', err => console.log('WEBPACK ERROR:', err))
     )
-    .pipe(dest(path.resolve(__dirname, 'dist')))
+    .pipe(dest(path.resolve(__dirname, JS_OUTPUT_DIR)))
 );
 // Watch TS
 task('ts:w', () => {

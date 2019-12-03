@@ -1,10 +1,9 @@
 import { AnimLoopEngine } from 'anim-loop-engine';
+import { Easel } from 'easel-js';
 
 import { GameOfLifeMatrix } from './GOLMatrix';
-import { clearCells, drawBgGrid, drawLiveCells } from './GOLDrawingUtils';
+import { drawBgGrid, drawLiveCells } from './GOLDrawingUtils';
 import { getPreset } from './GOLPresets';
-
-const engine = new AnimLoopEngine();
 
 // Defaults, declarations and elements
 let cellSize: number;
@@ -16,40 +15,24 @@ let gridSize = 20;
 let drawX = 0;
 let drawY = 0;
 let onChangeTimeoutId: number = 0;
-const GOL = new GameOfLifeMatrix(gridSize);
 const btnTextActive = 'PAUSE';
 const btnTextInactive = 'RUN';
+const GOL = new GameOfLifeMatrix(gridSize);
 const btnToggle = <HTMLButtonElement>document.getElementById('btn-toggle-sim');
 const txtGridSize = <HTMLInputElement>document.getElementById('txt-grid-size');
 const txtInterval = <HTMLInputElement>document.getElementById('txt-interval');
-const bgCanvas = <HTMLCanvasElement>document.getElementById('g-o-l-bg');
-const canvas = <HTMLCanvasElement>document.getElementById('g-o-l');
-const bgCtx: CanvasRenderingContext2D = bgCanvas.getContext('2d')!;
-const ctx: CanvasRenderingContext2D = canvas.getContext('2d')!;
+
+// Instantiate canvases and anim engine
+const bgEasel = new Easel('g-o-l-bg');
+const easel = new Easel('g-o-l');
+const engine = new AnimLoopEngine();
 
 // Assign defaults to control input fields
 txtGridSize.value = gridSize.toString();
 txtInterval.value = loopInterval.toString();
 
-// >>> Setup canvas
-const rect = canvas.getBoundingClientRect();
-const canvasStyle: any = window.getComputedStyle(canvas);
-const W = parseInt(canvasStyle.width);
-const H = parseInt(canvasStyle.height);
-bgCanvas.setAttribute('width', canvasStyle.width);
-canvas.setAttribute('width', canvasStyle.width);
-if (W < H) {
-  bgCanvas.style.height = canvasStyle.width;
-  canvas.style.height = canvasStyle.width;
-  bgCanvas.setAttribute('height', canvasStyle.width);
-  canvas.setAttribute('height', canvasStyle.width);
-} else {
-  bgCanvas.setAttribute('height', canvasStyle.height);
-  canvas.setAttribute('height', canvasStyle.height);
-}
-
 // Set grid cell size based on canvas width and number of divisions
-cellSize = W / gridSize;
+cellSize = easel.w / gridSize;
 
 // >>> Game control events
 // Run/pause button toggle
@@ -68,10 +51,9 @@ txtGridSize.onkeyup = (e: any) => {
     let newGridSize = parseInt(e.target.value);
     if (newGridSize !== gridSize) {
       gridSize = newGridSize;
-      cellSize = W / gridSize;
+      cellSize = easel.w / gridSize;
       GOL.gridSize = gridSize;
-      clearCells(bgCtx, W, H);
-      drawBgGrid(bgCtx, gridSize, cellSize);
+      drawBgGrid(bgEasel, gridSize, cellSize);
     }
   }, 1000);
 };
@@ -94,8 +76,7 @@ for (let i = 0; i < presetBtns.length; i++) {
       e.currentTarget.id.replace('preset-', ''),
       e.currentTarget.dataset.pad ? parseInt(e.currentTarget.dataset.pad) : null
     );
-    clearCells(ctx, W, H);
-    drawLiveCells(ctx, GOL.liveCells, cellSize);
+    drawLiveCells(easel, GOL.liveCells, cellSize);
   };
 }
 // <<< Presets
@@ -108,8 +89,8 @@ window.onblur = () => {
 // Handle cell clicks on the grid
 const handleMouseDraw = (e: MouseEvent) => {
   if (mouseBtn !== 0) {
-    const gridX = Math.floor((e.clientX - rect.left) / cellSize);
-    const gridY = Math.floor((e.clientY - rect.top) / cellSize);
+    const gridX = Math.floor((e.clientX - easel.rt.left) / cellSize);
+    const gridY = Math.floor((e.clientY - easel.rt.top) / cellSize);
 
     if (gridX !== drawX || gridY !== drawY || mouseBtn !== lastMouseBtn) {
       drawX = gridX;
@@ -119,19 +100,18 @@ const handleMouseDraw = (e: MouseEvent) => {
 
       // Toggle a cell's alive state
       GOL.setCellState(gridX, gridY, state);
-      clearCells(ctx, W, H);
-      drawLiveCells(ctx, GOL.liveCells, cellSize);
+      drawLiveCells(easel, GOL.liveCells, cellSize);
     }
 
     lastMouseBtn = mouseBtn;
   }
 };
-canvas.addEventListener('contextmenu', e => e.preventDefault());
-canvas.onmousedown = (e: MouseEvent) => {
+easel.cv.addEventListener('contextmenu', e => e.preventDefault());
+easel.cv.onmousedown = (e: MouseEvent) => {
   mouseBtn = e.button === 0 ? -1 : 1;
   handleMouseDraw(e);
 };
-canvas.onmousemove = handleMouseDraw;
+easel.cv.onmousemove = handleMouseDraw;
 window.onmouseup = () => (mouseBtn = 0);
 
 // Game update loop, receives timestamp from AnimLoopEngine
@@ -139,8 +119,7 @@ let tsFrom = 0;
 const update = (ts: number = 0) => {
   if (ts - tsFrom >= loopInterval) {
     GOL.iterate();
-    clearCells(ctx, W, H);
-    drawLiveCells(ctx, GOL.liveCells, cellSize);
+    drawLiveCells(easel, GOL.liveCells, cellSize);
     tsFrom = ts;
   }
 };
@@ -158,7 +137,7 @@ const stop = () => {
 };
 
 // Draw the BG grid
-drawBgGrid(bgCtx, gridSize, cellSize);
+drawBgGrid(bgEasel, gridSize, cellSize);
 
 // Add update task to engine
 engine.addTask(update);

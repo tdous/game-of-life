@@ -1,6 +1,6 @@
 {
   "name": "game-of-life",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Just retrying and old classic for fun.",
   "main": "lib/index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "webpack-stream": "^5.2.1"
   },
   "dependencies": {
-    "anim-loop-engine": "github:tdous/anim-loop-engine"
+    "anim-loop-engine": "github:tdous/anim-loop-engine",
+    "easel-js": "github:tdous/easel-js"
   }
 }
